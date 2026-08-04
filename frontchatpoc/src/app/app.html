@@ -1,0 +1,61 @@
+<!-- If the user is not connected, show the username input page -->
+ @if (!isConnected()) {
+<div id="username-page">
+  <div class="username-page-container">
+    <!-- Title of the username page -->
+    <h1 class="title">Type your username to join the Chatroom</h1>
+
+    <!-- Form to input the username -->
+    <!-- When the form is submitted, it calls the connect() method -->
+    <form (ngSubmit)="connect()">
+      <div class="form-group">
+        <!-- Username input field bound to the username property -->
+        <input [(ngModel)]="username" name="username" type="text" id="name" placeholder="Username" autocomplete="off" class="form-control" />
+      </div>
+
+      <!-- Button to submit the username and connect to the chat -->
+      <div class="form-group">
+        <button type="submit" class="accent username-submit">Start Chatting</button>
+      </div>
+    </form>
+  </div>
+</div>
+}
+
+@if (isConnected()) {
+<div id="chatroom">
+  <div class="chat-container">
+    <div class="chat-header">
+      <h2>Spring Boot WebSocket Demo App!</h2>
+    </div>
+
+    @if (connectingMessage()) {
+        <div class="connecting">{{ connectingMessage() }}</div>
+    }
+
+    <ul id="messageArea">
+      @for (message of messages(); track $index) {
+      <li [ngClass]="'chat-message'">
+         @if (message.type === 'CHAT') {
+            <i [style.backgroundColor]="getAvatarColor()">{{ message.sender.charAt(0) }}</i>
+        }
+        @if (message.type === 'CHAT') {
+            <span>{{ message.sender }}</span>
+        }
+        <p>{{ message.type === 'CHAT' ? message.content : message.sender + ' '}}</p>
+      </li>
+      }
+    </ul>
+
+    <form (ngSubmit)="sendMessage()" id="typingArea">
+      <div class="form-group">
+        <div class="input-group clearfix">
+          <input [(ngModel)]="message" name="message" type="text" id="message" placeholder="Write a message..." autocomplete="off" class="form-control" />
+          <button type="submit" class="primary">Send</button>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</div>
+}
